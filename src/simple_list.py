@@ -168,6 +168,29 @@ class SimpleListAggregator:
                 trimmed_mean[k] = (items[0][0] + items[-1][0]) / 2.0
         return trimmed_mean
 
+    def compute_mean(self, histogram_list):
+        """
+        Compute the exact mean for each coordinate using the aggregated histogram.
+
+        Parameters:
+          histogram_list: A list of histograms (one per coordinate). Each histogram is a dictionary
+                          where keys are sensor values and values are the corresponding counts.
+
+        Returns:
+          mean_values: A numpy array where each entry is the mean for that coordinate.
+        """
+        d = len(histogram_list)
+        mean_values = np.zeros(d)
+        for k in range(d):
+            hist = histogram_list[k]
+            total_count = sum(hist.values())
+            weighted_sum = sum(value * count for value, count in hist.items())
+            if total_count > 0:
+                mean_values[k] = weighted_sum / total_count
+            else:
+                mean_values[k] = 0.0  # In case there is no data, default to 0.
+        return mean_values
+
     def compute_global_aggregator(self, local_data):
         """
         Compute the global aggregator via exact histogram merging.
@@ -185,6 +208,25 @@ class SimpleListAggregator:
         root = roots[0]
         aggregated_histograms = self.aggregate_up(root, local_data)
         aggregator = self.compute_trimmed_mean(aggregated_histograms)
+        return aggregator
+
+    def compute_global_aggregator_wo_trimming(self, local_data):
+        """
+        Compute the global aggregator via exact histogram merging.
+
+        Parameters:
+          local_data: A dictionary mapping node id to its local integer value vector.
+
+        Returns:
+          aggregator: A numpy array containing the β-trimmed mean for each coordinate.
+        """
+        # Identify the spanning tree root (node with in-degree 0).
+        roots = [node for node in self.T.nodes() if self.T.in_degree(node) == 0]
+        if not roots:
+            raise ValueError("Spanning tree has no root.")
+        root = roots[0]
+        aggregated_histograms = self.aggregate_up(root, local_data)
+        aggregator = self.compute_mean(aggregated_histograms)
         return aggregator
 
 # --- Example test harness (for standalone testing) ---

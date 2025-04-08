@@ -310,7 +310,8 @@ else:
         "power_tx_event", "power_tx_central", "avg_energy_per_node_approx",
         "avg_energy_per_node_event", "avg_energy_per_node_central", "lifetime_rounds_approx",
         "lifetime_rounds_event", "lifetime_rounds_central", "threshold",
-        "f_approx_exceeds_threshold", "f_event_exceeds_threshold"
+        "f_approx_exceeds_threshold", "f_event_exceeds_threshold",
+        "f_central_untrimmed_mean", "abs_error_untrimmed"
     ])
 
 random.seed(seed)
@@ -339,6 +340,7 @@ for R in R_values:
                                 aggregator_periodic = TrimmedMeanAggregator(spanning_tree, R, beta, epsilon)
                                 aggregator_event = EventDrivenTrimmedMeanAggregator(spanning_tree, R, beta, epsilon, d_frac)
                                 aggregator_central = SimpleListAggregator(spanning_tree, R, beta)
+                                aggregator_central_untrimmed = SimpleListAggregator(spanning_tree, R, beta)
 
                                 config_results = []
                                 for t in range(time_iterations):
@@ -362,12 +364,15 @@ for R in R_values:
                                     approx_agg = aggregator_periodic.compute_global_aggregator(local_data)
                                     event_agg = aggregator_event.compute_global_aggregator(local_data)
                                     central_agg = aggregator_central.compute_global_aggregator(local_data)
+                                    central_agg_untrimmed = aggregator_central_untrimmed.compute_global_aggregator_wo_trimming(local_data)
 
                                     f_approx = monitoring_function(approx_agg)
                                     f_event = monitoring_function(event_agg)
                                     f_central = monitoring_function(central_agg)
+                                    f_central_untrimmed_mean = monitoring_function(central_agg_untrimmed)
                                     abs_error_approx = abs(f_approx - f_central)
                                     abs_error_event = abs(f_event - f_central)
+                                    abs_error_untrimmed = abs(f_central_untrimmed_mean - f_central)
 
                                     comm_overhead_approx = estimate_comm_overhead_from_digests(aggregator_periodic, local_data, spanning_tree)
                                     comm_overhead_event = estimate_comm_overhead_from_digests_event(aggregator_event, local_data, spanning_tree)
@@ -424,7 +429,9 @@ for R in R_values:
                                         "lifetime_rounds_central": lifetime_rounds_central,
                                         "threshold": tau,
                                         "f_approx_exceeds_threshold": f_approx_exceeds,
-                                        "f_event_exceeds_threshold": f_event_exceeds
+                                        "f_event_exceeds_threshold": f_event_exceeds,
+                                        "f_central_untrimmed_mean": f_central_untrimmed_mean,
+                                        "abs_error_untrimmed": abs_error_untrimmed
                                     })
 
                                 df_config = pd.DataFrame(config_results)
