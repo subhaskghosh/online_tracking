@@ -24,10 +24,10 @@ from matplotlib import rc
 import pandas as pd
 
 # Set plotting style.
-plt.style.use('seaborn-whitegrid')
-rc('text', usetex=True)
+plt.style.use('seaborn-v0_8-whitegrid')
+#rc('text', usetex=True)
 pd.plotting.register_matplotlib_converters()
-plt.style.use("seaborn-ticks")
+plt.style.use("seaborn-v0_8-ticks")
 
 
 #############################
