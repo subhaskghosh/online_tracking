@@ -365,10 +365,8 @@ class EventDrivenTrimmedMeanAggregator:
             return self.initialize(local_data)
         self.triggered = self._get_triggered_nodes(local_data)
         if len(self.triggered) == 0:
-            print("safe")
             return self.last_agg
         else:
-            print("updating safe interval; triggered nodes:", self.triggered)
             new_agg = self._compute_aggregator_from_sketches(local_data)
             self.last_agg = new_agg
             self.update_safe_intervals(local_data)

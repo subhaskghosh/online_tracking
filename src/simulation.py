@@ -197,7 +197,6 @@ def estimate_comm_overhead_from_digests_event(aggregator, local_data, tree, bits
         return estimate_comm_overhead_from_digests(aggregator, local_data, tree, bits_per_bucket)
 
     triggered = aggregator.get_triggered_nodes()
-    print("Getting the triggered nodes in simulation.py:", triggered)
     if not triggered:
         return 0
 
@@ -292,7 +291,7 @@ R_values = [100, 500, 1000, 5000, 10000]            # Domain for aggregators (se
 # Other simulation parameters.
 w = 100.0           # Deployment area: 100 x 100 square.
 comm_radius = [30.0, 25.0, 10.0, 8.0, 8.0]  # Communication radii.
-time_iterations = 10  # Number of simulation iterations.
+time_iterations = 100  # Number of simulation iterations.
 seed = 81278181      # Random seed for reproducibility.
 
 tau = 50.0           # Monitoring threshold.

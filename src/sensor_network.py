@@ -24,10 +24,10 @@ from matplotlib import rc
 import pandas as pd
 
 # Set plotting style.
-plt.style.use('seaborn-v0_8-whitegrid')
+plt.style.use('seaborn-whitegrid')
 #rc('text', usetex=True)
 pd.plotting.register_matplotlib_converters()
-plt.style.use("seaborn-v0_8-ticks")
+plt.style.use("seaborn-ticks")
 
 
 #############################
@@ -77,7 +77,9 @@ class CorrelatedGaussianDataStream(DataStream):
         Compute a spatial bias based on the sensor's position.
         For example, bias = 50 + 10*sin(2*pi*x/w)*cos(2*pi*y/w).
         """
-        return 51.0 + 10.0 * math.sin(2 * math.pi * self.x / self.w) * math.cos(2 * math.pi * self.y / self.w)
+        a = random.randint(45, 60)
+        b = random.randint(10, 30)
+        return 1.0 * a + 1.0 * b * math.sin(2 * math.pi * self.x / self.w) * math.cos(2 * math.pi * self.y / self.w)
 
     def get_next(self):
         noise = np.random.normal(0, self.sigma, size=self.d)
