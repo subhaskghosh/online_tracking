@@ -93,7 +93,7 @@ create_facet_plot(
 )
 
 
-# ---------------- Plot 7: Communication Overhead (epsilon vs delta frac) ----------------
+# ---------------- Plot 8: Communication Overhead (epsilon vs delta frac) ----------------
 comm_df4 = melt_and_map(df, ['nodes', 'epsilon', 'delta_frac'], list(comm_map.keys()), 'aggregator', 'comm_overhead', comm_map)
 create_facet_plot(
     comm_df4, 'epsilon', 'delta_frac', 'nodes', 'comm_overhead', 'aggregator',
