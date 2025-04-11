@@ -83,3 +83,20 @@ create_facet_plot(
     "Communication Overhead vs. Number of Nodes\n(Facets: Rows=β, Columns=ε)",
     "Number of Nodes", "Communication Overhead (bits)", "comm_overhead_beta_epsilon.pdf"
 )
+
+# ---------------- Plot 7: Communication Overhead (dimension vs delta frac) ----------------
+comm_df3 = melt_and_map(df, ['nodes', 'dimension', 'delta_frac'], list(comm_map.keys()), 'aggregator', 'comm_overhead', comm_map)
+create_facet_plot(
+    comm_df3, 'dimension', 'delta_frac', 'nodes', 'comm_overhead', 'aggregator',
+    "Communication Overhead vs. Number of Nodes\n(Facets: Rows=d, Columns=d_frac)",
+    "Number of Nodes", "Communication Overhead (bits)", "comm_overhead_dimension_delta_frac.pdf"
+)
+
+
+# ---------------- Plot 7: Communication Overhead (epsilon vs delta frac) ----------------
+comm_df4 = melt_and_map(df, ['nodes', 'epsilon', 'delta_frac'], list(comm_map.keys()), 'aggregator', 'comm_overhead', comm_map)
+create_facet_plot(
+    comm_df4, 'epsilon', 'delta_frac', 'nodes', 'comm_overhead', 'aggregator',
+    "Communication Overhead vs. Number of Nodes\n(Facets: Rows=ε, Columns=d_frac)",
+    "Number of Nodes", "Communication Overhead (bits)", "comm_overhead_epsilon_delta_frac.pdf"
+)
