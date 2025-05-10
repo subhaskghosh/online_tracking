@@ -29,9 +29,14 @@ def create_facet_plot(df, row, col, x, y, hue, title, x_label, y_label, filename
     g = sns.FacetGrid(df, row=row, col=col, margin_titles=True, height=3.5, palette='Spectral')
     g.map_dataframe(sns.lineplot, x=x, y=y, hue=hue, marker='o', ci='sd')
     g.add_legend(title=hue)
+    sns.move_legend(
+        g, "lower center",
+        bbox_to_anchor=(.5, 0.95), ncol=3, title=None, frameon=False,
+    )
     g.set_axis_labels(x_label, y_label)
     g.fig.subplots_adjust(top=0.9)
     g.set_titles(size=20)
+    plt.setp(g._legend.get_title(), fontsize=35)
     print(f'{title} → {filename}')
     g.savefig(os.path.join(output_dir, filename))
     plt.close(g.fig)
@@ -40,7 +45,7 @@ def create_facet_plot(df, row, col, x, y, hue, title, x_label, y_label, filename
 df = pd.read_csv("src/simulation_results_small.csv")
 
 # ---------------- Plot 1: Error vs Nodes (row=beta, col=epsilon) ----------------
-error_map = {'abs_error_approx': 'Approximate Q-Digest', 'abs_error_event': 'Event-driven Approximate Q-Digest'}
+error_map = {'abs_error_approx': r'$\textsc{Approximate-Trim}$', 'abs_error_event': r'$\textsc{Event-Driven-Approximate-Trim}$'}
 error_df = melt_and_map(df, ['nodes', 'beta', 'epsilon'], ['abs_error_approx', 'abs_error_event'], 'aggregator', 'abs_error', error_map)
 error_df = error_df.rename(columns={"beta": r"$ \beta $", "epsilon": r"$ \varepsilon $", "nodes": r"$ n $", "abs_error": "Absolute Error"})
 create_facet_plot(
@@ -71,9 +76,9 @@ if 'R' in df.columns:
 
 # ---------------- Plot 4: Energy per Node ----------------
 energy_map = {
-    'avg_energy_per_node_approx': 'Approximate Q-Digest',
-    'avg_energy_per_node_event': 'Event-driven Approximate Q-Digest',
-    'avg_energy_per_node_central': 'List Summarization'
+    'avg_energy_per_node_approx': r'$\textsc{Approximate-Trim}$',
+    'avg_energy_per_node_event': r'$\textsc{Event-Driven-Approximate-Trim}$',
+    'avg_energy_per_node_central': r'$\textsc{List-Summarization}$'
 }
 energy_df = melt_and_map(df, ['nodes', 'dimension', 'epsilon'], list(energy_map.keys()), 'aggregator', 'avg_energy_per_node', energy_map)
 energy_df = energy_df.loc[energy_df['dimension'].isin([20,60,80])]
@@ -87,9 +92,9 @@ create_facet_plot(
 
 # ---------------- Plot 5: Communication Overhead (dimension vs epsilon) ----------------
 comm_map = {
-    'comm_overhead_approx': 'Approximate Q-Digest',
-    'comm_overhead_event': 'Event-driven Approximate Q-Digest',
-    'comm_overhead_central': 'List Summarization'
+    'comm_overhead_approx': r'$\textsc{Approximate-Trim}$',
+    'comm_overhead_event': r'$\textsc{Event-Driven-Approximate-Trim}$',
+    'comm_overhead_central': r'$\textsc{List-Summarization}$'
 }
 comm_df1 = melt_and_map(df, ['nodes', 'dimension', 'epsilon'], list(comm_map.keys()), 'aggregator', 'comm_overhead', comm_map)
 comm_df1 = comm_df1.loc[comm_df1['dimension'].isin([20,60,80])]
@@ -136,10 +141,10 @@ create_facet_plot(
 # ---------------- Plot 9: Monitoring Function vs Iteration by R ----------------
 
 aggregator_map = {
-    'f_approx': 'Approximate Q-Digest',
-    'f_event': 'Event-driven Approximate Q-Digest',
-    'f_central': 'List Summarization',
-    'f_central_untrimmed_mean': 'List Summarization Untrimmed'
+    'f_approx': r'$\textsc{Approximate-Trim}$',
+    'f_event': r'$\textsc{Event-Driven-Approximate-Trim}$',
+    'f_central': r'$\textsc{List-Summarization}$',
+    'f_central_untrimmed_mean': r'$\textsc{List-Summarization}$ Untrimmed'
 }
 
 
@@ -161,10 +166,14 @@ def create_facet_plot_for_R(df, R_value):
     g = sns.FacetGrid(melted, row=r"$ \beta $", col= r"$ \varepsilon $", margin_titles=True, height=3)
     g.map_dataframe(sns.lineplot, x='iteration', y=r"$ f(\hat{G}) $", hue='aggregator', style="aggregator")
     g.add_legend(title='Aggregator')
+    sns.move_legend(
+        g, "lower center",
+        bbox_to_anchor=(.5, 0.95), ncol=4, title=None, frameon=False,
+    )
     g.set_axis_labels("Iteration", "Monitoring Function Value")
     g.fig.subplots_adjust(top=0.9)
     g.set_titles(size=20)
-
+    plt.setp(g._legend.get_title(), fontsize=35)
     outfile = os.path.join(output_dir, f"monitoring_vs_iteration_R_{R_value}.pdf")
     g.savefig(outfile)
     plt.close(g.fig)
